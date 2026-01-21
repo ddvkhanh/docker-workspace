@@ -28,6 +28,19 @@ parse_dates = [
 "tpep_dropoff_datetime"
 ]
 
+  
+def ingest_zones(engine):
+    url = "https://github.com/DataTalksClub/nyc-tlc-data/releases/download/misc/taxi_zone_lookup.csv"
+
+    df_zones = pd.read_csv(url)
+    print(f"[zones] rows={len(df_zones)}")
+
+    df_zones.to_sql(
+        name='zones', 
+        con=engine, 
+        if_exists='replace'
+    )
+
 @click.command()
 @click.option('--pg-user', default='root', help='PostgreSQL user')
 @click.option('--pg-pwd', default='root', help='PostgreSQL password')
@@ -43,6 +56,8 @@ def run(pg_user, pg_pwd, pg_host, pg_port, pg_db, year, month, target_table, chu
 
     url = f'{prefix}/yellow_tripdata_{year}-{month:02d}.csv.gz'
     engine = create_engine(f'postgresql://{pg_user}:{pg_pwd}@{pg_host}:{pg_port}/{pg_db}')
+
+    ingest_zones(engine)
 
     df_iter = pd.read_csv(
     prefix +'yellow_tripdata_2021-01.csv.gz',
@@ -67,7 +82,7 @@ def run(pg_user, pg_pwd, pg_host, pg_port, pg_db, year, month, target_table, chu
             con = engine,
             if_exists = 'append'
         )     
-    
+
 if __name__ == '__main__':
     run()
 
