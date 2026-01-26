@@ -1,10 +1,8 @@
 volumes:
   ny_taxi_postgres_data:
-    driver: local
   kestra_postgres_data:
-    driver: local
   kestra_data:
-    driver: local
+  kestra_tmp:
 
 services:
   pgdatabase:
@@ -50,8 +48,8 @@ services:
     command: server standalone
     volumes:
       - kestra_data:/app/storage
+      - kestra_tmp:/tmp/kestra-wd
       - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/kestra-wd:/tmp/kestra-wd
     environment:
       KESTRA_CONFIGURATION: |
         datasources:
