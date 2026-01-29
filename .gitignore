@@ -1,1 +1,3 @@
 *.parquet
+pipeline/.env_encoded
+pipeline/service-account.json
